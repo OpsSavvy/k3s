@@ -3,9 +3,19 @@ name: K3s Deploy
 on:
   schedule:
     - cron: '0 */12 * * *'
+    inputs:
+      reinstall:
+        description: 'Reinstall K3s'
+        required: false
+        default: false
   push:
     branches:
       - main
+    inputs:
+      reinstall:
+        description: 'Reinstall K3s'
+        required: false
+        default: false
   workflow_dispatch:
     inputs:
       reinstall:
