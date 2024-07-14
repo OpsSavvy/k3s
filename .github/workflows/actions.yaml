@@ -17,19 +17,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install K3s
-        run: |
-          echo ${{ secrets.K3S_SSH_KEY }} > /tmp/k3s_ssh_key
-          $k3s=$(ssh -i /tmp/k3s_ssh_key ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "which k3s")
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        host: ${{ secrets.K3S_SSH_HOST }}
+        username: ${{ secrets.K3S_SSH_USER }}
+        key: ${{ secrets.K3S_SSH_KEY }}
+        port: ${{ secrets.K3S_SSH_PORT }}
+        script: |
+          echo "Hello, K3s!"
+          $k3s=$(which k3s)
           echo $k3s
           if [ -z ${{ github.event.inputs.reinstall }} ]; then
             if [ ! -z $k3s ]; then
-              ssh -i /tmp/k3s_ssh_key ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "sh /usr/local/bin/k3s-uninstall.sh"
+              sh /usr/local/bin/k3s-uninstall.sh
             fi
-            ssh -i /tmp/k3s_ssh_key ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh"
+            curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh
           else
             if [ -z $k3s ]; then
-              ssh -i /tmp/k3s_ssh_key ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh"
+              curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh
             fi
           fi
