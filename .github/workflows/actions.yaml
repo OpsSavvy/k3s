@@ -1,8 +1,8 @@
 name: K3s Deploy
 
 on:
-  cron:
-    - '0 */12 * * *'
+  schedule:
+    - cron: '0 */12 * * *'
   workflow_dispatch:
   push:
     branches:
