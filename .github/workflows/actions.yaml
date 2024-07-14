@@ -2,7 +2,7 @@ name: K3s Deploy
 
 on:
   schedule:
-    - cron: '0/10 * * * *'
+    - cron: '* */12 * * *'
   push:
     branches:
       - main
