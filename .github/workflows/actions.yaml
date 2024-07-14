@@ -3,19 +3,9 @@ name: K3s Deploy
 on:
   schedule:
     - cron: '0 */12 * * *'
-    inputs:
-      reinstall:
-        description: 'Reinstall K3s'
-        required: false
-        default: false
   push:
     branches:
       - main
-    inputs:
-      reinstall:
-        description: 'Reinstall K3s'
-        required: false
-        default: false
   workflow_dispatch:
     inputs:
       reinstall:
@@ -38,11 +28,13 @@ jobs:
           echo "Hello, K3s!"
           k3s=$(which k3s)
           echo $k3s
-          if [ -z ${{ github.event.inputs.reinstall }} ]; then
-            if [ ! -z $k3s ]; then
-              sh /usr/local/bin/k3s-uninstall.sh
-            fi
-            curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh
+          if [ ${{ github.event_name }} == 'workflow_dispatch' ]; then          
+            if [ -z ${{ github.event.inputs.reinstall }} ]; then
+              if [ ! -z $k3s ]; then
+                sh /usr/local/bin/k3s-uninstall.sh
+              fi
+              curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh
+          fi
           else
             if [ -z $k3s ]; then
               curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh
