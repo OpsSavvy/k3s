@@ -26,7 +26,7 @@ jobs:
         port: ${{ secrets.K3S_SSH_PORT }}
         script: |
           echo "Hello, K3s!"
-          $k3s=$(which k3s)
+          k3s=$(which k3s)
           echo $k3s
           if [ -z ${{ github.event.inputs.reinstall }} ]; then
             if [ ! -z $k3s ]; then
