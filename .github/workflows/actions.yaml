@@ -20,14 +20,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install K3s
         run: |
-          $k3s=$(which k3s)
+          $k3s=$(ssh -i ${{ secrets.K3S_SSH_KEY }} ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "which k3s")
+          echo $k3s
           if [ -z ${{ github.event.inputs.reinstall }} ]; then
             if [ ! -z $k3s ]; then
-              K3S_SSH -i ${{ secrets.K3S_SSH_KEY }} ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "sh /usr/local/bin/k3s-uninstall.sh"
+              ssh -i ${{ secrets.K3S_SSH_KEY }} ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "sh /usr/local/bin/k3s-uninstall.sh"
             fi
-            K3S_SSH -i ${{ secrets.K3S_SSH_KEY }} ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh"
+            ssh -i ${{ secrets.K3S_SSH_KEY }} ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh"
           else
             if [ -z $k3s ]; then
-              K3S_SSH -i ${{ secrets.K3S_SSH_KEY }} ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh"
+              ssh -i ${{ secrets.K3S_SSH_KEY }} ${{ secrets.K3S_SSH_USER }}@${{ secrets.K3S_SSH_HOST }} "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh"
             fi
           fi
