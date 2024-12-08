@@ -48,7 +48,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install Helm
-      uses: azure/setup-helm@v1
+      uses: azure/setup-helm@v3
 
     - name: Configure kubectl
       uses: azure/setup-kubectl@v3
@@ -65,7 +65,6 @@ jobs:
     # 4. Helm Chart'ı Deploy Et
     - name: Deploy External Helm Chart
       run: |
-        helm init
         helm repo add argo https://argoproj.github.io/argo-helm
         helm repo update
         helm upgrade --install loibis-argo argo/argo-cd \
