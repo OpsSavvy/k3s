@@ -41,14 +41,14 @@ jobs:
             fi
           fi
   argocd:
+    needs: k3s
     runs-on: 'ubuntu-latest'
     steps:
     - uses: actions/checkout@v1
 
     - name: 'Deploy'
-      uses: 'deliverybot/helm@v1.5.0'
+      uses: 'deliverybot/helm@v1.7.0'
       with:
-        helm3: v3.8.1
         release: 'loibis-argo'
         namespace: 'argocd'
         chart: 'argo-cd'
