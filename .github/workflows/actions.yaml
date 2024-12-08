@@ -54,9 +54,6 @@ jobs:
         token: '${{ github.token }}'
         repo: https://argoproj.github.io/argo-helm
         version: 7.3.11
-        value-files: >-
-        [
-          "argocd/values.yaml"
-        ]
+        value-files: "argocd/values.yaml"
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
