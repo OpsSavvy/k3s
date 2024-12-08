@@ -65,6 +65,7 @@ jobs:
     # 4. Helm Chart'ı Deploy Et
     - name: Deploy External Helm Chart
       run: |
+        helm init --client-only
         helm repo add argo https://argoproj.github.io/argo-helm
         helm repo update
         helm upgrade --install loibis-argo argo/argo-cd \
