@@ -42,19 +42,33 @@ jobs:
           fi
   argocd:
     needs: k3s
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - name: Checkout Code
+      uses: actions/checkout@v2
 
-    - name: 'Deploy'
-      uses: 'deliverybot/helm@v1.7.0'
+    - name: Install Helm
+      uses: azure/setup-helm@v1
+
+    - name: Configure kubectl
+      uses: azure/setup-kubectl@v3
       with:
-        release: 'loibis-argo'
-        namespace: 'argocd'
-        chart: 'argo-cd'
-        token: '${{ github.token }}'
-        repo: https://argoproj.github.io/argo-helm
-        version: 7.3.11
-        value-files: "argocd/values.yaml"
+        version: 'v1.29.6'
+
+    - name: Authenticate with Kubernetes
       env:
-        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+        KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      run: |
+        echo "$KUBECONFIG" > kubeconfig
+        export KUBECONFIG=kubeconfig
+
+    # 4. Helm Chart'ı Deploy Et
+    - name: Deploy External Helm Chart
+      run: |
+        helm repo add argo https://argoproj.github.io/argo-helm
+        helm repo update
+        helm upgrade --install loibis-argo argo/argo-cd \
+          --namespace argocd \
+          --create-namespace \
+          --version 7.3.11 \
+          --values ./argocd/values.yaml
