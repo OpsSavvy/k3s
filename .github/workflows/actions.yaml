@@ -14,7 +14,7 @@ on:
         default: false
 
 jobs:
-  deploy:
+  k3s:
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using password
@@ -40,3 +40,23 @@ jobs:
               curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode=644" sh
             fi
           fi
+  argocd:
+    runs-on: 'ubuntu-latest'
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: 'Deploy'
+      uses: 'deliverybot/helm@v1.5.0'
+      with:
+        release: 'loibis-argo'
+        namespace: 'argocd'
+        chart: 'argo-cd'
+        token: '${{ github.token }}'
+        repo: https://argoproj.github.io/argo-helm
+        version: 7.3.11
+        value-files: >-
+        [
+          "argocd/values.yaml"
+        ]
+      env:
+        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'

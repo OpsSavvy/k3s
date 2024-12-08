@@ -1,0 +1,21 @@
+global:
+  domain: argocd.loibis.com
+
+configs:
+  params:
+    server.insecure: true
+  cm:
+    kustomize.buildOptions: --enable-helm
+    
+server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    extraTls:
+      - hosts:
+        - argocd.loibis.com
+        secretName: argocd-tls
