@@ -56,10 +56,8 @@ jobs:
         version: 'v1.29.6'
 
     - name: Authenticate with Kubernetes
-      env:
-        KUBECONFIG: ${{ secrets.KUBECONFIG }}
       run: |
-        echo "$KUBECONFIG" > kubeconfig
+        echo "${{ secrets.KUBECONFIG }}" > kubeconfig
         export KUBECONFIG=kubeconfig
 
     # 4. Helm Chart'ı Deploy Et
